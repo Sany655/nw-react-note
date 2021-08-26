@@ -1,17 +1,19 @@
 import React from 'react'
 import fs from 'fs'
-import UpdateNote from './UpdateNote'
+import Search from './Search'
+import Note from './Note'
+import { Context } from '../App'
 
 function Home() {
-    const [note, setNote] = React.useState([])
+    const contexts = React.useContext(Context)
     const [text, setText] = React.useState('')
     const [title, setTitle] = React.useState('')
 
     React.useEffect(() => {
         if (fs.existsSync('data.json')) {
-            setNote(JSON.parse(fs.readFileSync('data.json')))
+            contexts.setNote(JSON.parse(fs.readFileSync('data.json')))
         } else {
-            fs.writeFileSync('data.json', JSON.stringify([]))
+            fs.writeFileSync('data.json', JSON.stringify(contexts.note))
         }
     }, [])
 
@@ -26,20 +28,11 @@ function Home() {
                 title: title,
                 text: text
             }
-            setNote([newText, ...note])
+            contexts.setNote([newText, ...contexts.note])
             setText('')
             setTitle('')
-            fs.writeFileSync('data.json', JSON.stringify([newText, ...note]))
+            fs.writeFileSync('data.json', JSON.stringify([newText, ...contexts.note]))
         }
-    }
-
-    const handleDelete = i => {
-        setNote(note.filter(t => t !== note[i]))
-        fs.writeFileSync('data.json', JSON.stringify(note.filter(t => t !== note[i])))
-    }
-
-    const handleEdit = i => {
-
     }
 
     return (
@@ -51,34 +44,11 @@ function Home() {
                     <input placeholder='Text' type="text" className="form-control ms-2" value={text} onChange={e => setText(e.target.value)} />
                     <button className="btn btn-primary ms-2">Add</button>
                 </form>
+                <Search/>
                 <div className="row row-cols-lg-4 row-cols-md-2">
                     {
-                        note.map((t, i) => (
-                            <div className='my-3' key={i}>
-                                <hr />
-                                <h2 className="display-4 text-center">{t.title}</h2>
-                                <p>{t.text}</p>
-                                <div className="d-flex align-items-start justify-centant-between">
-                                    <p>{t.time}</p>
-                                    <div>
-                                        <button type="button" className="btn btn-sm btn-warning ms-3" data-bs-toggle='modal' href={`#note-update-modal-${i}`}>Edit</button>
-                                        <div class="modal fade" tabindex="-1" id={`note-update-modal-${i}`}>
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-body">
-                                                        <input type="text" className="form-control" />
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={() => { handleEdit(i) }}>Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button className="btn btn-sm btn-danger ms-3" onClick={() => { handleDelete(i) }}>Delete</button>
-                                    </div>
-                                </div>
-                            </div>
+                        contexts.note?.map((t, i) => (
+                            <Note t={t} key={i} i={i}/>
                         ))
                     }
                 </div>
