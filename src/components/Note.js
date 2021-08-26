@@ -1,5 +1,5 @@
 import React from 'react'
-import fs from 'fs'
+// import fs from 'fs'
 import Modal from 'bootstrap/js/dist/modal'
 import { Context } from '../App'
 
@@ -9,7 +9,7 @@ function Note({ t, i }) {
     const [edit, setEdit] = React.useState({})
     const handleDelete = i => {
         contexts.setNote(contexts.note.filter(t => t !== contexts.note[i]))
-        fs.writeFileSync('data.json', JSON.stringify(contexts.note.filter(t => t !== contexts.note[i])))
+        localStorage.setItem('data',JSON.stringify(contexts.note.filter(t => t !== contexts.note[i])))
     }
 
     const handleEdit = (i) => {
@@ -29,7 +29,6 @@ function Note({ t, i }) {
             time: newDate
         }
         contexts.setNote([...contexts.note])
-        fs.writeFileSync('data.json', JSON.stringify(contexts.note))
         modal.hide()
     }
     return (

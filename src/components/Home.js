@@ -10,10 +10,10 @@ function Home() {
     const [title, setTitle] = React.useState('')
 
     React.useEffect(() => {
-        if (fs.existsSync('data.json')) {
-            contexts.setNote(JSON.parse(fs.readFileSync('data.json')))
+        if (localStorage.getItem('data')) {
+            contexts.setNote(JSON.parse(localStorage.getItem('data')))
         } else {
-            fs.writeFileSync('data.json', JSON.stringify(contexts.note))
+            localStorage.setItem('data.json', JSON.stringify(contexts.note))
         }
     }, [])
 
@@ -31,7 +31,7 @@ function Home() {
             contexts.setNote([newText, ...contexts.note])
             setText('')
             setTitle('')
-            fs.writeFileSync('data.json', JSON.stringify([newText, ...contexts.note]))
+            localStorage.setItem('data',JSON.stringify([newText, ...contexts.note]))
         }
     }
 
